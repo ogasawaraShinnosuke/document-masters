@@ -86,9 +86,8 @@ assert(dinosaur2.foodness == Foodness.vegetable)
 var a: Int? = 1
 a = nil
 assert(a?.bigEndian == nil)
-if a != nil {
-  print(a!.bigEndian) // 強制アンラップ
-}
+let b = a != nil ? a!.bigEndian : 100 // 強制アンラップ
+assert(b == 100)
 
 // バインドすることでオプションの値チェックができる
 if let b = a {
@@ -100,4 +99,45 @@ if let b = a {
 // 暗黙的にアンラップされたオプション
 let c: Int! = 1
 print(c) // 都度アンラップする必要がないが，nilになる可能性があるなら暗黙化はやるべきではない
+```
+
+### レンジ演算子
+
+``` swift
+// クローズドレンジ
+// 1〜10までループし，`i`には1〜10が代入される
+for i in 1...10 {
+  print(i)
+}
+
+// ハーフオープンレンジ
+// 1〜9までループし，`i`には1〜9が代入される
+for i in 1..<5 {
+  print(i)
+}
+```
+
+### 辞書型
+
+``` swift
+let crypto_currency: [String: String] = ["BitCoin": "BTC", "Ripple": "XRP"]
+for (name, key) in crypto_currency {
+  print("\(name) \(key)")
+}
+```
+
+### Guard
+
+``` swift
+enum Status {
+  case OK
+  case NG
+}
+func a(_ b: String) -> String{
+  guard Status.OK == b else {
+    return "NG"
+  }
+  return "OK"
+}
+assert(a(Status.OK) == "OK")
 ```

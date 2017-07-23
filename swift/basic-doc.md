@@ -178,5 +178,42 @@ func swapValues(_ a: inout Int, _ b: inout Int) {
 var updA = 59
 var updB = 1111
 swapValues(&updA, &updB)
-print("\(updA) \(updB)")
+assert(updA == 1111)
+assert(updB == 59)
 ```
+
+### クロージャ
+- Java8以降のlambdaや，Cのブロックに似ている機能
+- 関数とクロージャは参照型
+- クロージャが呼び出されない場合、クロージャ内の式は評価されない
+- 戻り値が曖昧な時は`return`が必要
+- 型推論が効くなら省略可
+- swiftによる推測記法がたくさんあるので，それをサンプルコードにした
+- `@autoclosure @escaping`というものもある
+
+``` swift
+let values = [73,2,96,14,6,0,1,80]
+
+// クロージャの書き方・基本
+var a1 = values.sorted(by: { (v1: String, v2: String) -> Bool in return v1 < v2 })
+assert(a1==[0, 1, 2, 6, 14, 73, 80, 96])
+
+// クロージャの書き方・型推論
+var a2 = values.sorted(by: { v1, v2 in v1 < v2 })
+assert(a2==[0, 1, 2, 6, 14, 73, 80, 96])
+
+// クロージャの書き方・簡略引数名
+var a3 = values.sorted(by: { $0 < $1 })
+assert(a3==[0, 1, 2, 6, 14, 73, 80, 96])
+
+// クロージャの書き方・演算子メソッド
+var a4 = values.sorted(by: <)
+assert(a4==[0, 1, 2, 6, 14, 73, 80, 96])
+
+// トレーリングクローズ
+var a5 = values.sorted() { $0 < $1 }
+assert(a5==[0, 1, 2, 6, 14, 73, 80, 96])
+var a6 = values.sorted { $0 < $1 }
+assert(a6==[0, 1, 2, 6, 14, 73, 80, 96])
+```
+

@@ -182,6 +182,37 @@ assert(updA == 1111)
 assert(updB == 59)
 ```
 
+##### クラスと構造体
+- 構造体は何らかの変数等に代入されるとコピーだが，クラスは参照型である
+
+``` swift
+// c1bはc1aからコピーされたものなので，変更しても互いは独立している
+struct CryptoCurrency1 {
+  var name: String
+  var fullName: String
+}
+var c1a = CryptoCurrency1(name: "BTC", fullName: "BitCoin")
+var c1b = c1a
+c1b.name = "XRP"
+c1b.fullName = "Ripple"
+assert(c1a.name==c1b.name && c1a.fullName==c1b.fullName)
+
+// c2aとc2bは参照型で同様の値を表しているため，互いの変更が互いに反映
+class CryptoCurrency2 {
+  var name: String
+  var fullName: String
+  init(name: String, fullName: String) {
+    self.name = name
+    self.fullName = fullName
+  }
+}
+var c2a = CryptoCurrency2(name: "BTC", fullName: "BitCoin")
+var c2b = c2a
+c2b.name = "XRP"
+c2b.fullName = "Ripple"
+assert(c2a===c2b)
+```
+
 ### クロージャ
 - Java8以降のlambdaや，Cのブロックに似ている機能
 - 関数とクロージャは参照型

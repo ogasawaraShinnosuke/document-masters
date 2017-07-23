@@ -1,3 +1,8 @@
+# このドキュメントについて
+- 当ドキュメントは恣意的に書かれております
+- サンプルコードに関しては，`Apple Swift version 3.1`で動作確認をしているため，それ以外の動作保証はありません
+- 公式の https://developer.apple.com/library/content/navigation/ を参照しています
+
 ## Swift
 - iOS、macOS、watchOS、およびtvOSアプリケーション開発用の新しいプログラミング言語
 - タイプセーフな言語，ただし，タイプ注釈はあまり書かない．型推論があるから
@@ -75,6 +80,11 @@ assert(foodness == Foodness.vegetable)
 // タプルに直接名前を付けても良い
 let dinosaur2 = ("イグアノドン", 10, Age.early_cretaceous, foodness: Foodness.vegetable)
 assert(dinosaur2.foodness == Foodness.vegetable)
+
+// age, foodnessは任意指定
+func getIguanodon(age: Age = Age.early_cretaceous, foodness: Foodness = Foodness.vegetable) -> (name: String, total_length: Int, age: Age, foodness: Foodness){
+    return ("イグアノドン", 10, age, foodness)
+}
 ```
 
 ### オプション
@@ -133,6 +143,8 @@ enum Status {
   case OK
   case NG
 }
+
+// `_`は引数ラベルを省略している
 func a(_ b: String) -> String{
   guard Status.OK == b else {
     return "NG"
@@ -140,4 +152,31 @@ func a(_ b: String) -> String{
   return "OK"
 }
 assert(a(Status.OK) == "OK")
+```
+
+### inout
+- 関数パラメタはデフォルトが定数だが，それを変更可能にする時に使う
+    - `inout` を型の前に付与して，呼び出す時に`&`を変数の前につける
+- クラスのインスタンス，関数は参照型であり，それ以外はすべて値型となる
+- [これで完結](https://stackoverflow.com/questions/27364117/is-swift-pass-by-value-or-pass-by-reference?answertab=votes#tab-top)
+
+#### inoutの実態
+- コピーインコピーアウト（値による呼び出し結果）
+- 関数が呼び出されると，引数の「値」がコピーされる
+- 関数の本体では，コピーが変更される
+- 関数が戻ると，コピーの「値」が元の引数に代入される
+
+#### 参照による呼び出し
+- 引数が物理アドレスに格納されている場合，関数本体の内部と外部の両方で同じメモリが使用される
+
+``` swift
+func swapValues(_ a: inout Int, _ b: inout Int) {
+  let t = a
+  a = b
+  b = t
+}
+var updA = 59
+var updB = 1111
+swapValues(&updA, &updB)
+print("\(updA) \(updB)")
 ```

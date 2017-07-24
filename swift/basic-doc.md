@@ -184,6 +184,7 @@ assert(updB == 59)
 
 ##### クラスと構造体
 - 構造体は何らかの変数等に代入されるとコピーだが，クラスは参照型である
+- 多くのメンバ変数が必要とされる設計にするならクラスで実装するほうがよいし，単純なカプセル化の場合にstructにする感覚で，かつその値をコピーさせて使いたい
 
 ``` swift
 // c1bはc1aからコピーされたものなので，変更しても互いは独立している
@@ -248,3 +249,31 @@ var a6 = values.sorted { $0 < $1 }
 assert(a6==[0, 1, 2, 6, 14, 73, 80, 96])
 ```
 
+### プロパティ
+- ストアドプロパティは，特定のクラスや構造体のインスタンスの一部として格納される定数や変数のこと
+- プロパティオブザーバは，`willSet`により値の格納直前に呼び出される処理を，`didSet`により新しい値が格納直後に呼び出される処理を定義できる
+
+``` swift
+class Position {
+  var total: Int = 0 {
+
+    // 値の格納直前に呼び出される
+    willSet(newTotal) {
+      print("I'm position is \(newTotal*2)")
+    }
+
+    // 新しい値が格納直後に呼び出される
+    didSet {
+      if total > oldValue {
+        print("Nice \(total - oldValue)")
+      }
+    }
+  }
+
+  static var masterPosition = 1_000_000
+}
+let p = Position()
+p.total = 5
+p.total = 1
+assert(Position.masterPosition == 1_000_000)
+```

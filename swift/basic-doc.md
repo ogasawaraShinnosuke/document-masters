@@ -277,3 +277,50 @@ p.total = 5
 p.total = 1
 assert(Position.masterPosition == 1_000_000)
 ```
+
+### 自己プロパティ
+- 通常，構造型や列挙型は値型なので（クラス型は参照型）プロパティが変更不可
+- 変更させるためには，`mutating`を使うこと
+
+``` swift
+struct CryptoCurrency {
+  var name: String?, priceYen = 0
+
+  // mutatingによりプロパティの変更が可能になる
+  mutating func updatePriceYen(_ updateValue: Int) {
+    priceYen = updateValue
+  }
+}
+// 構造体なので，プロパティを変更するためにはletは使ってはいけない
+var c = CryptoCurrency(name: "BTC", priceYen: 30)
+assert(c.priceYen == 30)
+c.updatePriceYen(31)
+assert(c.priceYen == 31)
+
+// 自転車のライト４段階
+enum BikeLight {
+  // 消灯，点灯，弱，点滅
+  case off, up, weak, flashing
+  mutating func press() {
+    switch self {
+      case .off:
+        self = .up
+      case .up:
+        self = .weak
+      case .weak:
+        self = .flashing
+      case .flashing:
+        self = .off
+    }
+  }
+}
+var l = BikeLight.up
+assert(BikeLight.up==l)
+l.press()
+assert(BikeLight.weak==l)
+l.press()
+assert(BikeLight.flashing==l)
+l.press()
+assert(BikeLight.off==l)
+```
+

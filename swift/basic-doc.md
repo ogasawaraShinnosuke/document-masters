@@ -61,6 +61,16 @@ let a: UInt = 18_446_744_073_709_551_614
 assert(a + 1 == 18446744073709551615)
 ```
 
+### マップ
+- `let`で宣言したら要素を追加することができない
+
+``` swift
+var cryptoCurrency = ["BTC": 3000, "XRP": 0.2, "XEM": 0.015]
+assert(["BTC": 3000, "XRP": 0.2, "XEM": 0.015]==cryptoCurrency)
+cryptoCurrency["ETH"] = 250
+assert(["BTC": 3000, "XRP": 0.2, "XEM": 0.015, "ETH": 250]==cryptoCurrency)
+```
+
 ### タプル
 - 複数の値を単一の複合値にグループ化
 
@@ -324,3 +334,70 @@ l.press()
 assert(BikeLight.off==l)
 ```
 
+### 値型のイニシャライザ委任
+- インスタンスの初期化の一部を委譲
+
+``` swift
+struct CryptoCurrency {
+  var name: String
+  var fullName: String
+  init(name: String, fullName: String) {
+    self.name = name
+    self.fullName = fullName
+  }
+}
+struct BitCoin {
+  var c: CryptoCurrency
+  init(_ c: CryptoCurrency) {
+    self.c = c
+  }
+}
+var b = BitCoin(CryptoCurrency(name: "BTC", fullName: "BitCoin"))
+```
+
+### クラス型のイニシャライザ委譲
+- ルール
+    - 指定イニシャライザは，スーパークラスから指定されたイニシャライザを呼ぶ
+    - `convenience`が同じクラスの別の初期化子を呼ぶ
+    - `convenience`が最終的に指定されたイニシャライザを呼ぶ
+- サブクラスは，デフォルトでスーパークラス初期化子を継承しない
+- 継承はコマンドラインでやってるとそれぞれが独立しているためエラーになるので注意
+
+``` swift
+class Animal {
+    var name: String
+    required init(_ name: String) {
+        self.name = name
+    }
+
+    // 別のinitを呼ぶ
+    convenience init() {
+        self.init("animal")
+    }
+    func cry() -> String {
+        return "\(name) gya-gya-"
+    }
+}
+
+class Cat: Animal {
+
+    // 親の最終的に指定されたイニシャライザを呼ぶ
+    required init(_ name: String) {
+        super.init(name)
+    }
+
+    // 別のinitを呼ぶ
+    convenience init() {
+        self.init("cat")
+    }
+    override func cry() -> String {
+        return "\(name) mya-mya-"
+    }
+}
+
+var c = Cat("mike")
+assert("mike mya-mya-"==c.cry())
+```
+
+### 初期化解除
+- deinitializerは，クラスインスタンスの割当が解除される直前に呼び出される
